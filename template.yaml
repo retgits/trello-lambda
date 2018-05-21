@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: The AWS CloudFormation template for the Trello Serverless application
+Resources:
+  Trello:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: bin/
+      Handler: trello
+      Runtime: go1.x
+      Tracing: Active
+      Environment:
+        Variables:
+          appkey: xxx
+          apptoken: xxx
+          defaultlist: xxx
+      Tags:
+        commit: xxx
