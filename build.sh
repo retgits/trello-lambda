@@ -68,7 +68,7 @@ deploy() {
     # Create a new S3 bucket
     today=`date +%Y%m%d`
     # Get the difference between 53 (which is the max bucket size, 63, minus the length of today and 2 hyphens)
-    num=`expr 53 - ${#FUNC,,}`
+    num=`expr 53 - ${#FUNC}`
     suffix=`cat /dev/urandom | tr -dc 'a-z0-9' | fold -w $num | head -n 1`
     bucket=`aws s3 mb s3://${FUNC,,}-$today-$suffix`
     bucket="${bucket:13}"
