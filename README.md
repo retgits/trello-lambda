@@ -44,7 +44,7 @@ Within the AWS Systems Manager Parameter store there are three parameters that a
 _Details on how to get the `appkey` and `apptoken` for Trello can be found in the [Trello API documentation](https://trello.readme.io/docs/get-started)_
 
 ## TODO
-[ ] Replace the trigger code with a proper Flogo trigger
+- [ ] Replace the trigger code with a proper Flogo trigger
 
 ## License
 The MIT License (MIT)
