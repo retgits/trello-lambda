@@ -13,6 +13,11 @@ Resources:
         Variables:
           appkey: xxx
           apptoken: xxx
-          defaultlist: xxx
+          list: xxx
       Tags:
         commit: xxx
+Outputs:
+  ARN:
+    Value: GetAtt Trello.Arn
+    Export:
+      Name: :trello:arn

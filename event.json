@@ -1,7 +1,7 @@
 {
     "EventVersion": "1.0",
     "EventSource": "aws:lambda",
-    "Trello": {
+    "Event": {
         "Title": "Hello World",
         "Description": "Hello World is a great way to test things"
     }

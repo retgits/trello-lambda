@@ -1,3 +1,5 @@
+//go:generate go run ../../../../TIBCOSoftware/flogo-lib/flogo/gen/gen.go $GOPATH
+
 /*
 Package main is the main executable of the serverless function. It will create a new
 Trello card for each invocation of this service. To do so it requires access to Trello
@@ -8,50 +10,27 @@ package main
 
 // The imports
 import (
-	"log"
-	"os"
-
-	"github.com/adlio/trello"
+	"github.com/TIBCOSoftware/flogo-lib/logger"
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-// Variables that are set as Environment Variables
-var (
-	trelloAppKey      = os.Getenv("appkey")
-	trelloAccessToken = os.Getenv("apptoken")
-	trelloListID      = os.Getenv("defaultlist")
-)
+// LambdaEvent is the outer structure of the events that are received by this function
+type LambdaEvent struct {
+	EventVersion string
+	EventSource  string
+	Event        interface{}
+}
 
 // The handler function is executed every time that a new Lambda event is received.
 // It takes a JSON payload (you can see an example in the event.json file) and only
 // returns an error if the something went wrong.
-func handler(request map[string]interface{}) error {
-	// Create a new Trello client
-	trelloClient := trello.NewClient(trelloAppKey, trelloAccessToken)
+func handler(request LambdaEvent) error {
 
-	// Get the title and the description for the card
-	trelloEvent := request["Trello"].(map[string]interface{})
-	cardTitle := trelloEvent["Title"].(string)
-	cardDescription := trelloEvent["Description"].(string)
-	log.Printf("Got a new event: %s", trelloEvent)
-
-	// Create an instance of a card
-	card := trello.Card{
-		Name:   cardTitle,
-		Desc:   cardDescription,
-		IDList: trelloListID,
-	}
-
-	// Create the card on the Trello board
-	err := trelloClient.CreateCard(&card, trello.Defaults())
-
+	_, err := Invoke(request.Event)
 	if err != nil {
-		log.Print(err)
+		logger.Infof("Error while creating Trello card: %s", err.Error())
 		return err
 	}
-
-	// Move the card to the bottom of the list
-	card.MoveToBottomOfList()
 
 	// Return no error
 	return nil
