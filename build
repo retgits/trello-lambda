@@ -17,6 +17,9 @@ clean() {
 # Create the executable
 build() {
     echo Executing build...
+    cd src
+    go generate
+    cd ..
     GOOS=linux GOARCH=amd64 go build -o bin/${FUNC,,} src/*.go
 }
 
