@@ -1,6 +1,6 @@
 # Trello app for Lambda
 
-This Serverless function is designed to create a new Trello Cards each time it gets invoked.
+This serverless function is designed to create a new Trello Cards each time it gets invoked.
 
 ## Layout
 ```bash
@@ -14,7 +14,7 @@ This Serverless function is designed to create a new Trello Cards each time it g
 └── template.yaml               <-- SAM Template
 ```
 
-## build.sh
+## build
 The `build` file has seven commands to make working with this app easier than it already is
 
 * deps: go get and update all the dependencies
