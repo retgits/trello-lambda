@@ -40,11 +40,11 @@ getparams() {
             if [[ $row = "/"* ]]; then
                 param=${row::-1};
                 sVar=$(aws ssm get-parameter --name ${param} --with-decryption | jq '.Parameter.Value')
-                $(yq w -i template.yaml Resources.${FUNC}.Properties.Environment.Variables.${param} ${sVar})
+                sed -i '' "s#${param}: xxx#${param}: ${sVar}#g" template.yaml
             else
                 param=${row::-1};
                 sVar=$(aws ssm get-parameter --name /${FUNC,,}/${param} --with-decryption | jq '.Parameter.Value')
-                $(yq w -i template.yaml Resources.${FUNC}.Properties.Environment.Variables.${param} ${sVar})
+                sed -i '' "s/${param}: xxx/${param}: ${sVar}/g" template.yaml
             fi
         fi; 
     done
@@ -65,7 +65,7 @@ getversion() {
     if [[ ! -f ./template.yaml.bak ]]; then
         cp template.yaml template.yaml.bak
     fi
-    $(yq w -i template.yaml Resources.${FUNC}.Properties.Tags.commit ${sVar})
+    sed -i '' "s/commit: xxx/commit: ${sVar}/g" template.yaml
 }
 
 # Deploy the function to AWS Lambda
