@@ -37,10 +37,14 @@ getparams() {
     fi
     for row in $(yq r template.yaml Resources.${FUNC}.Properties.Environment.Variables); do 
         if [[ $row = *":"* ]]; then 
-            if [[ $row = "/"* ]]; then
+            if [[ $row = "P_"* ]]; then
                 param=${row::-1};
-                sVar=$(aws ssm get-parameter --name ${param} --with-decryption | jq '.Parameter.Value')
-                sed -i '' "s#${param}: xxx#${param}: ${sVar}#g" template.yaml
+                param=${param:1}
+                # Environment parameters have to start with a letter, to make sure the script can distinguish between
+                # actual parameter names and ones that come from the parameter store, ones that come from the parameter
+                # store start with P_ in the template
+                sVar=$(aws ssm get-parameter --name ${param//_//} --with-decryption | jq '.Parameter.Value')
+                sed -i '' "s#P${param}: xxx#P${param}: ${sVar}#g" template.yaml
             else
                 param=${row::-1};
                 sVar=$(aws ssm get-parameter --name /${FUNC,,}/${param} --with-decryption | jq '.Parameter.Value')
