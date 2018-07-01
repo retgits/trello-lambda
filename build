@@ -37,9 +37,15 @@ getparams() {
     fi
     for row in $(yq r template.yaml Resources.${FUNC}.Properties.Environment.Variables); do 
         if [[ $row = *":"* ]]; then 
-            param=${row::-1};
-            sVar=$(aws ssm get-parameter --name /${FUNC,,}/${param} --with-decryption | jq '.Parameter.Value')
-            $(yq w -i template.yaml Resources.${FUNC}.Properties.Environment.Variables.${param} ${sVar})
+            if [[ $row = "/"* ]]; then
+                param=${row::-1};
+                sVar=$(aws ssm get-parameter --name ${param} --with-decryption | jq '.Parameter.Value')
+                $(yq w -i template.yaml Resources.${FUNC}.Properties.Environment.Variables.${param} ${sVar})
+            else
+                param=${row::-1};
+                sVar=$(aws ssm get-parameter --name /${FUNC,,}/${param} --with-decryption | jq '.Parameter.Value')
+                $(yq w -i template.yaml Resources.${FUNC}.Properties.Environment.Variables.${param} ${sVar})
+            fi
         fi; 
     done
     sed -i '' 's/ GetAtt / !GetAtt /g' template.yaml
