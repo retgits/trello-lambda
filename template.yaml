@@ -11,13 +11,13 @@ Resources:
       Tracing: Active
       Environment:
         Variables:
-          appkey: xxx
-          apptoken: xxx
-          list: xxx
+          appkey: {/trello/appkey}
+          apptoken: {/trello/apptoken}
+          list: {/trello/list}
       Tags:
         commit: xxx
 Outputs:
   ARN:
-    Value: GetAtt Trello.Arn
+    Value: !GetAtt Trello.Arn
     Export:
       Name: :trello:arn

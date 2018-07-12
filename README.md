@@ -5,7 +5,7 @@ This serverless function is designed to create a new Trello Cards each time it g
 ## Layout
 ```bash
 .
-├── build                       <-- Make to automate build
+├── .travis.yml                 <-- Travis-CI build file
 ├── event.json                  <-- Sample event to test using SAM local
 ├── README.md                   <-- This file
 ├── src                         <-- Source code for a lambda function
@@ -14,25 +14,8 @@ This serverless function is designed to create a new Trello Cards each time it g
 └── template.yaml               <-- SAM Template
 ```
 
-## build
-The `build` file has seven commands to make working with this app easier than it already is
-
-* deps: go get and update all the dependencies
-* clean: removes the ./bin folder
-* test: uses SAM local and the event in `event.json` to test the implementation
-* build: creates the executable
-* getversion: get the latest committed version
-* getparams: updates the SAM template with the values from the AWS Systems Manager Parameter Store
-* delparams: removes the values of the environment variables in the SAM template
-* deploy: deploy the function to AWS Lambda
-
-## Prerequisites
-While executing the the build script there are a few programs that are used:
-
-* [jq](https://stedolan.github.io/jq/)
-* [yq](https://github.com/mikefarah/yq)
-* [aws cli](https://github.com/aws/aws-cli)
-* [sam cli](https://github.com/awslabs/aws-sam-cli)
+## Build and Deploy
+Building and deploying this function is done through Travis-CI using [lambda-builder](https://github.com/retgits/lambda-builder)
 
 ## AWS Systems Manager
 Within the AWS Systems Manager Parameter store there are three parameters that are used in this app:
