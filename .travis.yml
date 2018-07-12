@@ -10,8 +10,8 @@ install:
   - curl -O -L $ARTIFACT_URL
   - chmod +x lambda-builder
   - mv ./lambda-builder $HOME/gopath/bin
-  - pip install awscli
-  - pip install aws-sam-cli
+  - pip install --user awscli
+  - pip install --user aws-sam-cli
   
 script:
   - lambda-builder version
