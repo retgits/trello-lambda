@@ -9,11 +9,12 @@ install:
   - ARTIFACT_URL="https://github.com/retgits/lambda-builder/releases/download/$LATEST_VERSION/lambda-builder"
   - curl -O -L $ARTIFACT_URL
   - chmod +x lambda-builder
-  - mv ./lambda-builder $HOME/gopath/bin
   - pip install --user awscli
   - pip install --user aws-sam-cli
   
 script:
-  - lambda-builder version
+  - pwd
+  - ls -alh
+  - ./lambda-builder version
   - aws --version
   - sam --version
