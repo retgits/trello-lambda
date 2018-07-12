@@ -13,8 +13,11 @@ install:
   - pip install --user aws-sam-cli
   
 script:
-  - pwd
-  - ls -alh
   - ./lambda-builder version
-  - aws --version
-  - sam --version
+  - ./lambda-builder clean
+  - ./lambda-builder installDeps
+  - ./lambda-builder build
+  - ./lambda-builder getParameters
+  - ./lambda-builder getVersion
+  - ./lambda-builder deploy
+  - ./lambda-builder deleteParameters
