@@ -27,7 +27,7 @@ Within the AWS Systems Manager Parameter store there are three parameters that a
 _Details on how to get the `appkey` and `apptoken` for Trello can be found in the [Trello API documentation](https://trello.readme.io/docs/get-started)_
 
 ## TODO
-- [ ] Replace the trigger code with a proper Flogo trigger
+- [ ] Remove `shim_support.go` and `shim.go` as soon as the shim generation support gets into the master branch of [flogo-lib](https://github.com/TIBCOSoftware/flogo-lib)
 
 ## License
 The MIT License (MIT)
