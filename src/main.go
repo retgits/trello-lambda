@@ -1,4 +1,4 @@
-//go:generate go run ../../../TIBCOSoftware/flogo-lib/flogo/gen/gen.go -shim $GOPATH
+//go:generate go run ../../../TIBCOSoftware/flogo-lib/flogo/gen/gen.go $GOPATH
 
 /*
 Package main is the main executable of the serverless function. It will create a new
