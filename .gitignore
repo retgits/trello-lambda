@@ -1,3 +1,5 @@
-##
-bin
+## Binaries
+bin/*
+
+## SAM Local deployment artifacts
 packaged.yaml

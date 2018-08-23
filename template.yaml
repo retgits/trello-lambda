@@ -6,16 +6,18 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: bin/
-      Handler: trello
+      Handler: trello-lambda
       Runtime: go1.x
       Tracing: Active
+      Policies:
+        - AmazonSSMReadOnlyAccess
       Environment:
         Variables:
-          appkey: {/trello/appkey}
-          apptoken: {/trello/apptoken}
-          list: {/trello/list}
+          region: us-west-2
       Tags:
-        commit: xxx
+        version: "0.0.1"
+      Description: Create a Trello card for every event
+      MemorySize: 128
 Outputs:
   ARN:
     Value: !GetAtt Trello.Arn
