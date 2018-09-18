@@ -15,7 +15,7 @@ Resources:
         Variables:
           region: us-west-2
       Tags:
-        version: "0.0.1"
+        version: "1.0.0"
       Description: Create a Trello card for every event
       MemorySize: 128
 Outputs:
