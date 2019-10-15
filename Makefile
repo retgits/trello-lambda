@@ -58,6 +58,7 @@ test: ## Run all unit tests and print coverage
 build: ## Build the executable for Lambda
 	echo
 	GOOS=linux GOARCH=amd64 go build -o bin/weekly-archiver $(if $V,-v) $(version_flags) ./weekly-archiver
+	GOOS=linux GOARCH=amd64 go build -o bin/five-minute-journal $(if $V,-v) $(version_flags) ./five-minute-journal
 	echo
 
 clean: ## Remove all generated files
@@ -69,6 +70,7 @@ clean: ## Remove all generated files
 local: ## Run SAM to test the Lambda function using Docker
 	echo
 	sam local invoke WeeklyArchiver -e ./weekly-archiver/test/event.json
+	sam local invoke FiveMinuteJournal -e ./five-minute-journal/test/event.json
 	echo
 
 deploy: clean build ## Deploy the app to AWS Lambda
@@ -86,6 +88,7 @@ deploy: clean build ## Deploy the app to AWS Lambda
 		LambdaEncryptionKeyID=/$(stage)/global/kmskey \
 		TrelloApiKey=/$(stage)/trello/apikey \
 		TrelloAppToken=/$(stage)/trello/apptoken \
-		TrelloListID=/$(stage)/trello/lists/main-done
+		TrelloDoneListID=/$(stage)/trello/lists/main-done \
+		TrelloTodayListID=/$(stage)/trello/lists/main-today
 	aws cloudformation describe-stacks --stack-name $(project_name)-$(stage) --query 'Stacks[].Outputs'
 	echo

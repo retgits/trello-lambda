@@ -5,6 +5,7 @@ Trello-Lambda is an opinionated stack of Lambda functions to help automate Trell
 ## Available functions
 
 * [Weekly Archiver](./weekly-archiver): Archives all cards from the Done list
+* [Five Minute Journal](./five-minute-journal): Creates a new [Five Minute Journal](https://www.intelligentchange.com/collections/all/products/the-five-minute-journal) card every day
 
 ## Prerequisites
 
@@ -16,6 +17,7 @@ The app relies on [AWS Systems Manager Parameter Store](https://aws.amazon.com/s
 * `/<stage>/trello/apikey`: The Trello API Key.
 * `/<stage>/trello/apptoken`: The Trello app token.
 * `/<stage>/trello/lists/main-done`: The ID of the Trello list from which to archive cards.
+* `/<stage>/trello/lists/main-today`: The ID of the Trello list to create a new Five Minute Journal card in.
 
 With the _`<stage>`_ variable, you can have different stack referencing different sets of API keys. Details on how to get the `appkey` and `apptoken` for Trello can be found in the [Trello API documentation](https://trello.readme.io/docs/get-started).
 
