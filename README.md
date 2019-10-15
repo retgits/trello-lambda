@@ -2,6 +2,10 @@
 
 Trello-Lambda is an opinionated stack of Lambda functions to help automate Trello.
 
+## Available functions
+
+* [Weekly Archiver](./weekly-archiver): Archives all cards from the Done list
+
 ## Prerequisites
 
 ### Environment Variables
