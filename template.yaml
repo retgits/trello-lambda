@@ -34,17 +34,20 @@ Parameters:
   TrelloAppToken:
     Type: AWS::SSM::Parameter::Value<String>
     Description: The Trello app token.
-  TrelloListID:
+  TrelloDoneListID:
     Type: AWS::SSM::Parameter::Value<String>
-    Description: The ID of the Trello list.
+    Description: The ID of the Done list in Trello.
+  TrelloTodayListID:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: The ID of the Today list in Trello.
 
 Resources:
-  WeeklyArchiver:
+  FiveMinuteJournal:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub ${ApplicationStackName}-weekly-archiver
+      FunctionName: !Sub ${ApplicationStackName}-five-minute-journal
       CodeUri: bin/
-      Handler: trello-lambda
+      Handler: five-minute-journal
       Runtime: go1.x
       Policies:
         - AWSLambdaRole
@@ -54,7 +57,36 @@ Resources:
         Variables:
           API_KEY: !Ref TrelloApiKey
           APP_TOKEN: !Ref TrelloAppToken
-          LIST_ID: !Ref TrelloListID
+          LIST_ID: !Ref TrelloTodayListID
+      Tags:
+        version: !Ref Version
+        author: !Ref Author
+        team: !Ref Team
+        feature: !Ref ApplicationStackName
+        region: !Ref AWS::Region
+      Events:
+        FiveMinuteJournal:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 13 * * ? *) # Run at 1:00 pm (UTC) every day
+      Description: Create a new Five Minute Journal card
+      MemorySize: 128
+  WeeklyArchiver:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${ApplicationStackName}-weekly-archiver
+      CodeUri: bin/
+      Handler: weekly-archiver
+      Runtime: go1.x
+      Policies:
+        - AWSLambdaRole
+        - KMSDecryptPolicy:
+            KeyId: !Ref LambdaEncryptionKeyID
+      Environment:
+        Variables:
+          API_KEY: !Ref TrelloApiKey
+          APP_TOKEN: !Ref TrelloAppToken
+          LIST_ID: !Ref TrelloDoneListID
       Tags:
         version: !Ref Version
         author: !Ref Author
