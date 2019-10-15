@@ -1,60 +1,49 @@
-# trello-lambda - A serverless app to create Trello cards
+# trello-lambda
 
-This serverless function is designed to create a new Trello Cards each time it gets invoked.
+Trello-Lambda is an opinionated stack of Lambda functions to help automate Trello.
 
-## Layout
+## Available functions
+
+* [Weekly Archiver](./weekly-archiver): Archives all cards from the Done list
+
+## Prerequisites
+
+### Environment Variables
+
+The app relies on [AWS Systems Manager Parameter Store](https://aws.amazon.com/systems-manager/features/) (SSM) to store encrypted variables on how to connect to Trello. The variables it relies on are:
+
+* `/<stage>/global/kmskey`: The ID of the KMS key used to decrypt environment variables.
+* `/<stage>/trello/apikey`: The Trello API Key.
+* `/<stage>/trello/apptoken`: The Trello app token.
+* `/<stage>/trello/lists/main-done`: The ID of the Trello list from which to archive cards.
+
+With the _`<stage>`_ variable, you can have different stack referencing different sets of API keys. Details on how to get the `appkey` and `apptoken` for Trello can be found in the [Trello API documentation](https://trello.readme.io/docs/get-started).
+
+These parameters are encrypted using [Amazon KMS](https://aws.amazon.com/kms/) and retrieved from the Parameter Store on deployment. This way the encrypted variables are given to the Lambda function and the function needs to take care of decrypting them at runtime. To be able to decrypt the variables at runtime, the Lambda function will need permission to access the KMS Key with the KeyID specified in `/<stage>/global/kmskey`
+
+To create the encrypted variables, run the below command for all of the variables
+
 ```bash
-.                    
-├── test            
-│   └── event.json      <-- Sample event to test using SAM local
-├── .gitignore          <-- Ignoring the things you do not want in git
-├── function.go         <-- Test main function code
-├── LICENSE             <-- The license file
-├── main.go             <-- The Flogo Lambda trigger code
-├── Makefile            <-- Makefile to build and deploy
-├── README.md           <-- This file
-└── template.yaml       <-- SAM Template
+aws ssm put-parameter                       \
+   --type String                            \
+   --name "<your variable>"                 \
+   --value $(aws kms encrypt                \
+              --output text                 \
+              --query CiphertextBlob        \
+              --key-id <YOUR_KMS_KEY_ID>    \
+              --plaintext "PLAIN TEXT HERE")
 ```
 
-## Installing
-There are a few ways to install this project
+## Build and Deploy
 
-### Get the sources
-You can get the sources for this project by simply running
-```bash
-$ go get -u github.com/retgits/github-trello/...
-```
+There are several `Make` targets available to help build and deploy the function
 
-### Deploy
-Deploy the Lambda app by running
-```bash
-$ make deploy
-```
-
-## Parameters
-### AWS Systems Manager parameters
-The code will automatically retrieve the below list of parameters from the AWS Systems Manager Parameter store:
-
-* **/trello/appkey**: Your Trello App token
-* **/trello/apptoken**: Your Trello App key
-* **/trello/list**: The ID of the list you want to send the card to
-
-_Details on how to get the `appkey` and `apptoken` for Trello can be found in the [Trello API documentation](https://trello.readme.io/docs/get-started)_
-
-### Deployment parameters
-In the `template.yaml` there are certain deployment parameters:
-
-* **region**: The AWS region in which the code is deployed
-
-## Make targets
-trello-lambda has a _Makefile_ that can be used for most of the operations
-
-```
-usage: make [target]
-```
-
-* **deps**: Gets all dependencies for this app
-* **clean** : Removes the dist directory
-* **build**: Builds an executable to be deployed to AWS Lambda
-* **test-lambda**: Clean, builds and tests the code by using the AWS SAM CLI
-* **deploy**: Cleans, builds and deploys the code to AWS Lambda
+| Target | Description                                       |
+|--------|---------------------------------------------------|
+| build  | Build the executable for Lambda                   |
+| clean  | Remove all generated files                        |
+| deploy | Deploy the app to AWS Lambda                      |
+| deps   | Get the Go modules from the GOPROXY               |
+| help   | Displays the help for each target (this message). |
+| local  | Run SAM to test the Lambda function using Docker  |
+| test   | Run all unit tests and print coverage             |
