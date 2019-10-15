@@ -1,25 +1,71 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: The AWS CloudFormation template for the Trello Serverless application
+Description: >
+  Trello
+
+  An opinionated stack of Lambda functions to help automate Trello
+
+Globals:
+  Function:
+    Timeout: 5 ## Maximum time that the function can run before it is killed in seconds
+
+Parameters:
+  Stage:
+    Type: String
+    Description: The stage where the application is running in, e.g., dev, prod.
+  Version:
+    Type: String
+    Description: The version of the application.
+  Author:
+    Type: String
+    Description: The name of the person running the deployment.
+  Team:
+    Type: String
+    Description: The team the person running the deployment is on.
+  ApplicationStackName:
+    Type: String
+    Description: The stack name the used to deploy the application.
+  LambdaEncryptionKeyID:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: The ID of the KMS key used to decrypt environment variables.
+  TrelloApiKey:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: The Trello API Key.
+  TrelloAppToken:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: The Trello app token.
+  TrelloListID:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: The ID of the Trello list.
+
 Resources:
-  Trello:
+  WeeklyArchiver:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub ${ApplicationStackName}-weekly-archiver
       CodeUri: bin/
       Handler: trello-lambda
       Runtime: go1.x
-      Tracing: Active
       Policies:
-        - AmazonSSMReadOnlyAccess
+        - AWSLambdaRole
+        - KMSDecryptPolicy:
+            KeyId: !Ref LambdaEncryptionKeyID
       Environment:
         Variables:
-          region: us-west-2
+          API_KEY: !Ref TrelloApiKey
+          APP_TOKEN: !Ref TrelloAppToken
+          LIST_ID: !Ref TrelloListID
       Tags:
-        version: "1.0.0"
-      Description: Create a Trello card for every event
+        version: !Ref Version
+        author: !Ref Author
+        team: !Ref Team
+        feature: !Ref ApplicationStackName
+        region: !Ref AWS::Region
+      Events:
+        WeeklyArchiver:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 7 ? * MON *) # Run at 7:00 am (UTC) every Monday
+      Description: Archive all cards from the Done list
       MemorySize: 128
-Outputs:
-  ARN:
-    Value: !GetAtt Trello.Arn
-    Export:
-      Name: :trello:arn
+
