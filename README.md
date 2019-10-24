@@ -1,6 +1,13 @@
 # trello-lambda
 
-Trello-Lambda is an opinionated stack of Lambda functions to help automate Trello.
+[![Go Report Card](https://goreportcard.com/badge/github.com/retgits/trello-lambda?style=flat-square)](https://goreportcard.com/report/github.com/retgits/trello-lambda)
+[![Godoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](https://godoc.org/github.com/retgits/trello-lambda)
+![GitHub](https://img.shields.io/github/license/retgits/trello-lambda?style=flat-square)
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/retgits/trello-lambda?sort=semver&style=flat-square)
+
+> Trello-Lambda is an opinionated stack of Lambda functions to help automate Trello.
+
+I use [Trello](https://trello.com) all the time and instead of manually copy/pasting and clearing out cards, I built a set of serverless apps to help me with that.
 
 ## Available functions
 
@@ -9,7 +16,10 @@ Trello-Lambda is an opinionated stack of Lambda functions to help automate Trell
 
 ## Prerequisites
 
-### Environment Variables
+* [Go (at least Go 1.12)](https://golang.org/dl/)
+* [AWS](https://portal.aws.amazon.com/) account, with access to Lambda, SSM and KMS
+
+### AWS Systems Manager Parameter Store
 
 The app relies on [AWS Systems Manager Parameter Store](https://aws.amazon.com/systems-manager/features/) (SSM) to store encrypted variables on how to connect to Trello. The variables it relies on are:
 
@@ -21,7 +31,9 @@ The app relies on [AWS Systems Manager Parameter Store](https://aws.amazon.com/s
 
 With the _`<stage>`_ variable, you can have different stack referencing different sets of API keys. Details on how to get the `appkey` and `apptoken` for Trello can be found in the [Trello API documentation](https://trello.readme.io/docs/get-started).
 
-These parameters are encrypted using [Amazon KMS](https://aws.amazon.com/kms/) and retrieved from the Parameter Store on deployment. This way the encrypted variables are given to the Lambda function and the function needs to take care of decrypting them at runtime. To be able to decrypt the variables at runtime, the Lambda function will need permission to access the KMS Key with the KeyID specified in `/<stage>/global/kmskey`
+### AWS Key Management Service
+
+The parameters are encrypted using [Amazon KMS](https://aws.amazon.com/kms/) and retrieved from the Parameter Store on deployment. This way the encrypted variables are given to the Lambda function and the function needs to take care of decrypting them at runtime. To be able to decrypt the variables at runtime, the Lambda function will need permission to access the KMS Key with the KeyID specified in `/<stage>/global/kmskey`
 
 To create the encrypted variables, run the below command for all of the variables
 
@@ -36,9 +48,9 @@ aws ssm put-parameter                       \
               --plaintext "PLAIN TEXT HERE")
 ```
 
-## Build and Deploy
+## Usage
 
-There are several `Make` targets available to help build and deploy the function
+There are several `make` targets available to help build and deploy the function
 
 | Target | Description                                       |
 |--------|---------------------------------------------------|
@@ -49,3 +61,13 @@ There are several `Make` targets available to help build and deploy the function
 | help   | Displays the help for each target (this message). |
 | local  | Run SAM to test the Lambda function using Docker  |
 | test   | Run all unit tests and print coverage             |
+
+## Contributing
+
+[Pull requests](https://github.com/retgits/trello-lambda/pulls) are welcome. For major changes, please open [an issue](https://github.com/retgits/trello-lambda/issues) first to discuss what you would like to change.
+
+Please make sure to update tests as appropriate.
+
+## License
+
+See the [LICENSE](./LICENSE) file in the repository
